@@ -51,9 +51,9 @@ public class MainClass extends JavaPlugin {
 		config.addDefault("shout-char", '!');
 
 		config.addDefault("shout-template",
-				"clanprefix&eplayer&rsuffix: &7message");
+				"@clan&e@prefix@player&r@suffix: &7@message");
 		config.addDefault("chat-template",
-				"clanprefix&7player&rsuffix: &fmessage");
+				"@clan&7@prefix@player&r@suffix: &f@message");
 
 		config.options().copyDefaults(true);
 

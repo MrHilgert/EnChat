@@ -3,6 +3,7 @@ package ru.hilgert.chat.utils;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,29 +17,31 @@ public class Utils {
 	public static String getPrefix(Player p) {
 		return MainClass.pex_enabled ? ru.tehkode.permissions.bukkit.PermissionsEx
 				.getPermissionManager().getUser(p).getPrefix()
-				: "@prefix";
+				: "";
 	}
 
 	public static String getSuffix(Player p) {
 		return MainClass.pex_enabled ? ru.tehkode.permissions.bukkit.PermissionsEx
 				.getPermissionManager().getUser(p).getSuffix()
-				: "@suffix";
+				: "";
 	}
 
 	public static String getTag(Player p) {
-		return MainClass.sc_enabled ? playerTag(p) : "clan";
+		return MainClass.sc_enabled ? playerTag(p) : "";
 	}
 
 	private static String playerTag(Player p) {
 		if (MainClass.sc_enabled) {
-			net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager cm = new net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager();
-			if (cm.getClanPlayer(p) != null) {
-				return ChatColor.translateAlternateColorCodes('&', cm
-						.getClanPlayer(p).getTagLabel());
+			try {
+				net.sacredlabyrinth.phaed.simpleclans.SimpleClans sc = (SimpleClans) MainClass.pm
+						.getPlugin("SimpleClans");
+				return ChatColor.translateAlternateColorCodes('&', sc
+						.getClanManager().getClanPlayer(p).getTagLabel());
+			} catch (NullPointerException e) {
+				return "";
 			}
-			return "";
-		} else
-			return "clan";
+		}
+		return "";
 	}
 
 	public static String getChatTemplate(Player p, String prefix,
@@ -46,9 +49,9 @@ public class Utils {
 		return ChatColor.translateAlternateColorCodes(
 				'&',
 				MainClass.config.getString("chat-template")
-						.replace("player", p.getName())
-						.replace("prefix", prefix).replace("suffix", suffix)
-						.replace("clan", clan).replace("message", "%2$s"));
+						.replace("@player", p.getName())
+						.replace("@prefix", prefix).replace("@suffix", suffix)
+						.replace("@clan", clan).replace("@message", "%2$s"));
 	}
 
 	public static String getShoutTemplate(Player p, String prefix,
@@ -56,9 +59,9 @@ public class Utils {
 		return ChatColor.translateAlternateColorCodes(
 				'&',
 				MainClass.config.getString("shout-template")
-						.replace("player", p.getName())
-						.replace("prefix", prefix).replace("suffix", suffix)
-						.replace("clan", clan).replace("message", "%2$s"));
+						.replace("@player", p.getName())
+						.replace("@prefix", prefix).replace("@suffix", suffix)
+						.replace("@clan", clan).replace("@message", "%2$s"));
 	}
 
 	@SuppressWarnings("deprecation")
