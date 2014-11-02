@@ -47,6 +47,8 @@ public class MainClass extends JavaPlugin {
 		config.addDefault("SimpleClans", false);
 		config.addDefault("pex", false);
 
+		config.addDefault("ranged-chat", true);
+		
 		config.addDefault("chat-range", 100d);
 		config.addDefault("shout-char", '!');
 
@@ -55,6 +57,8 @@ public class MainClass extends JavaPlugin {
 		config.addDefault("chat-template",
 				"@clan&7@prefix@player&r@suffix: &f@message");
 
+		config.addDefault("lang.shout", "&aИспользуйте: !<Сообщение>");
+		
 		config.options().copyDefaults(true);
 
 		saveConfig();

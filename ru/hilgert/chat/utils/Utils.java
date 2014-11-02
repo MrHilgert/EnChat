@@ -44,6 +44,10 @@ public class Utils {
 
 	public static String getChatTemplate(Player p, String prefix,
 			String suffix, String clan) {
+		if (!MainClass.config.getBoolean("ranged-chat")) {
+			return getShoutTemplate(p, prefix, suffix, clan);
+		}
+		
 		return ChatColor.translateAlternateColorCodes(
 				'&',
 				MainClass.config.getString("chat-template")
@@ -92,6 +96,10 @@ public class Utils {
 
 		return recipients;
 
+	}
+
+	public static String lang(String string) {
+		return MainClass.config.getString("lang."+string);
 	}
 
 }

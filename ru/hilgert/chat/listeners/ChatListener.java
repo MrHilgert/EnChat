@@ -17,6 +17,10 @@ public class ChatListener implements Listener {
 		if (e.isCancelled())
 			return;
 
+		if(e.getMessage().equalsIgnoreCase(MainClass.config.getString("shout-char"))){
+			 e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Utils.lang("shout"))); e.setCancelled(true);
+		}
+		
 		e.getRecipients().clear();
 
 		String message = e.getPlayer().hasPermission("enchat.chat.colored") ? ChatColor
