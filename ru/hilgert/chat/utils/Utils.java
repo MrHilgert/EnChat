@@ -3,8 +3,6 @@ package ru.hilgert.chat.utils;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,7 +31,7 @@ public class Utils {
 	private static String playerTag(Player p) {
 		if (MainClass.sc_enabled) {
 			try {
-				net.sacredlabyrinth.phaed.simpleclans.SimpleClans sc = (SimpleClans) MainClass.pm
+				net.sacredlabyrinth.phaed.simpleclans.SimpleClans sc = (net.sacredlabyrinth.phaed.simpleclans.SimpleClans) MainClass.pm
 						.getPlugin("SimpleClans");
 				return ChatColor.translateAlternateColorCodes('&', sc
 						.getClanManager().getClanPlayer(p).getTagLabel());
