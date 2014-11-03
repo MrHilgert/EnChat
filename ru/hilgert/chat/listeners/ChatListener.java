@@ -28,8 +28,7 @@ public class ChatListener implements Listener {
 				.getMessage();
 			
 		boolean shout = false;
-		shout = e.getMessage().charAt(0) == MainClass.config.getString(
-				"shout-char", "!").charAt(0);
+		shout = e.getMessage().startsWith(MainClass.config.getString("shout-char", "!"));
 
 		Player p = e.getPlayer();
 		
