@@ -39,7 +39,8 @@ public class MainClass extends JavaPlugin {
 				&& config.getBoolean("pex", true);
 
 		pm.registerEvents(new ChatListener(), this);
-
+		
+		getCommand("enchat").setExecutor(new EnChatCommand());
 	}
 
 	private void initConfig() {
@@ -48,17 +49,21 @@ public class MainClass extends JavaPlugin {
 		config.addDefault("pex", false);
 
 		config.addDefault("ranged-chat", true);
-		
+
 		config.addDefault("chat-range", 100d);
 		config.addDefault("shout-char", '!');
 
 		config.addDefault("shout-template",
 				"@clan&e@prefix@player&r@suffix: &7@message");
 		config.addDefault("chat-template",
-				"@clan&7@prefix@player&r@suffix: &f@message");
+				"[@count] @clan&7@prefix@player&r@suffix: &f@message");
 
 		config.addDefault("lang.shout", "&aИспользуйте: !<Сообщение>");
-		
+		config.addDefault("lang.config-reloaded", "&aКонфиг перезагружен");
+		config.addDefault("lang.usage", "&aИспользуйте: /enchat <reload>");
+		config.addDefault("lang.no-permission"
+				+ "", "&cУ вас нету прав на использование данной команды");
+
 		config.options().copyDefaults(true);
 
 		saveConfig();

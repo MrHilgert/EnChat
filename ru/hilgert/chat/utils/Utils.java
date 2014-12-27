@@ -1,5 +1,6 @@
 package ru.hilgert.chat.utils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class Utils {
 		if (!MainClass.config.getBoolean("ranged-chat")) {
 			return getShoutTemplate(p, prefix, suffix, clan);
 		}
-		
+
 		return ChatColor.translateAlternateColorCodes(
 				'&',
 				MainClass.config.getString("chat-template")
@@ -66,16 +67,15 @@ public class Utils {
 						.replace("@clan", clan).replace("@message", "%2$s"));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static List<Player> getLocalRecipients(Player p, double range) {
 
 		Location loc = p.getLocation();
 
-		List<Player> recipients = new LinkedList<Player>();
+		List<Player> recipients = new ArrayList<Player>();
 
 		double squaredDistance = Math.pow(range, 2);
 
-		for (Player recipient : Bukkit.getServer().getOnlinePlayers()) {
+		for (Player recipient : p.getWorld().getPlayers()) {
 
 			if (loc.distanceSquared(recipient.getLocation()) > squaredDistance) {
 				continue;
@@ -86,7 +86,10 @@ public class Utils {
 		return recipients;
 	}
 
-	@SuppressWarnings("deprecation")
+	public static int getLocalRecipientsLenght(Player p, double range){
+		return getLocalRecipients(p, range).size();
+	}
+
 	public static List<Player> getAllRecipients() {
 		List<Player> recipients = new LinkedList<Player>();
 
@@ -95,11 +98,10 @@ public class Utils {
 		}
 
 		return recipients;
-
 	}
 
 	public static String lang(String string) {
-		return MainClass.config.getString("lang."+string);
+		return ChatColor.translateAlternateColorCodes('&', MainClass.config.getString("lang." + string));
 	}
 
 }
