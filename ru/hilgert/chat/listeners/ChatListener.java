@@ -11,18 +11,24 @@ import ru.hilgert.chat.utils.Utils;
 
 public class ChatListener implements Listener {
 
+	private static int maxUpperChars;
+	private static double range;
+	private static String shoutChar;
+
+	public ChatListener() {
+		maxUpperChars = MainClass.config.getInt("maxUpperChars");
+		range = MainClass.config.getDouble("chat-range", 100d);
+		shoutChar = MainClass.config.getString("shout-char");
+	}
+
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e) {
 		Player p = e.getPlayer();
 
 		if (e.isCancelled())
 			return;
-		double range = MainClass.config.getDouble("chat-range", 100d);
-		if (e.getMessage().equalsIgnoreCase(
-				MainClass.config.getString("shout-char"))) {
-			e.getPlayer().sendMessage(
-					ChatColor.translateAlternateColorCodes('&',
-							Utils.lang("shout")));
+		if (e.getMessage().equalsIgnoreCase(shoutChar)) {
+			e.getPlayer().sendMessage(Utils.lang("shout"));
 			e.setCancelled(true);
 		}
 
@@ -31,7 +37,16 @@ public class ChatListener implements Listener {
 		String message = e.getPlayer().hasPermission("enchat.chat.colored") ? ChatColor
 				.translateAlternateColorCodes('&', e.getMessage()) : e
 				.getMessage();
-
+		message = p.hasPermission("enchat.matches.bypass") ? message : Utils.removeMatches(message) ;
+		if (Utils.getUpperCharsCount(message) >= maxUpperChars
+				&& !p.hasPermission("enchat.caps.bypass")) {
+			e.setCancelled(true);
+			p.sendMessage(Utils.lang("dontCaps"));
+			return;
+		}
+		
+		
+		
 		boolean shout = e.getMessage().startsWith(
 				MainClass.config.getString("shout-char", "!"))
 				&& p.hasPermission("enchat.channel.global");

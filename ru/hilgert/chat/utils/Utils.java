@@ -86,7 +86,7 @@ public class Utils {
 		return recipients;
 	}
 
-	public static int getLocalRecipientsLenght(Player p, double range){
+	public static int getLocalRecipientsLenght(Player p, double range) {
 		return getLocalRecipients(p, range).size();
 	}
 
@@ -100,8 +100,27 @@ public class Utils {
 		return recipients;
 	}
 
+	public static int getUpperCharsCount(String str) {
+		int count = 0;
+		str = str.replace(" ", "");
+		for (int i = 0; i < str.length(); i++) {
+			if (Character.isUpperCase(str.charAt(i)))
+				count++;
+		}
+		return count;
+	}
+
+	public static String removeMatches(String message) {
+		for (String match : MainClass.config.getStringList("matches")) {
+			message = message.replaceAll(match,
+					MainClass.config.getString("replaceTo"));
+		}
+		return message;
+	}
+
 	public static String lang(String string) {
-		return ChatColor.translateAlternateColorCodes('&', MainClass.config.getString("lang." + string));
+		return ChatColor.translateAlternateColorCodes('&',
+				MainClass.config.getString("lang." + string));
 	}
 
 }
