@@ -1,5 +1,6 @@
 package ru.hilgert.chat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,27 +13,51 @@ public class Chat implements IChat {
 
 	private final String chatName;
 
+	private final String template;
+	private final boolean ranged;
+	private final double range;
+	private final String prefix;
+	private final boolean isDefault;
+	private final String fName;
+
 	private final HashMap<Player, String> lastMessages = new HashMap<Player, String>();
-	
+	private final List<String> mutes = new ArrayList<String>();
+
 	public Chat(String chatName) {
 		this.chatName = chatName;
+
+		template = ChatColor.translateAlternateColorCodes('&',
+				EnChat.config.getString("chats." + getName() + ".format"));
+
+		ranged = EnChat.config.getBoolean("chats." + getName() + ".ranged");
+
+		range = isRanged() ? EnChat.config.getDouble("chats." + getName()
+				+ ".range") : 0.0;
+
+		prefix = isDefault() ? "" : EnChat.config.getString("chats."
+				+ getName() + ".prefix");
+
+		isDefault = EnChat.config.getString("default-chat")
+				.equalsIgnoreCase(getName());
+		if (!EnChat.config.contains("chats." + getName() + ".mutes")) {
+			EnChat.config.set("chats." + getName() + ".mutes", mutes);
+		}
+		fName = EnChat.config.getString("chats." + getName() + ".name");
 	}
 
 	@Override
 	public String getTemplate() {
-		return ChatColor.translateAlternateColorCodes('&',
-				MainClass.config.getString("chats." + getName() + ".format"));
+		return template;
 	}
 
 	@Override
 	public boolean isRanged() {
-		return MainClass.config.getBoolean("chats." + getName() + ".ranged");
+		return ranged;
 	}
 
 	@Override
 	public double getRange() {
-		return isRanged() ? MainClass.config.getDouble("chats." + getName()
-				+ ".range") : 0.0;
+		return range;
 	}
 
 	@Override
@@ -42,8 +67,7 @@ public class Chat implements IChat {
 
 	@Override
 	public String getChatPrefix() {
-		return isDefault() ? "" : MainClass.config.getString("chats."
-				+ getName() + ".prefix");
+		return prefix;
 	}
 
 	@Override
@@ -56,7 +80,7 @@ public class Chat implements IChat {
 				.replace("@message", "%2$s")
 				.replace(
 						"@count",
-						Utils.getLocalRecipientsLenght(player, getRange(),
+						Utils.getRecipientsSize(player, getRange(),
 								getSeePermission()) + "");
 	}
 
@@ -80,8 +104,7 @@ public class Chat implements IChat {
 
 	@Override
 	public boolean isDefault() {
-		return MainClass.config.getString("default-chat").equalsIgnoreCase(
-				getName());
+		return isDefault;
 	}
 
 	@Override
@@ -92,6 +115,16 @@ public class Chat implements IChat {
 	@Override
 	public void setLastMessage(Player player, String message) {
 		lastMessages.put(player, message);
+	}
+
+	@Override
+	public List<String> getMutes() {
+		return mutes;
+	}
+
+	@Override
+	public String getFormattedName() {
+		return fName;
 	}
 
 }

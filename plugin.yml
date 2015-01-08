@@ -1,7 +1,7 @@
 name: EnChat
 version: 4.0
 author: Hilgert
-main: ru.hilgert.chat.MainClass
+main: ru.hilgert.chat.EnChat
 commands:
     enchat:
         usage: '/enchat <reload>'

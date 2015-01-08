@@ -11,30 +11,30 @@ import org.bukkit.entity.Player;
 
 import ru.hilgert.chat.Chat;
 import ru.hilgert.chat.IChat;
-import ru.hilgert.chat.MainClass;
+import ru.hilgert.chat.EnChat;
 
 public class Utils {
 
 	public static String getPrefix(Player p) {
-		return MainClass.pex_enabled ? ru.tehkode.permissions.bukkit.PermissionsEx
+		return EnChat.pex_enabled ? ru.tehkode.permissions.bukkit.PermissionsEx
 				.getPermissionManager().getUser(p).getPrefix()
 				: "";
 	}
 
 	public static String getSuffix(Player p) {
-		return MainClass.pex_enabled ? ru.tehkode.permissions.bukkit.PermissionsEx
+		return EnChat.pex_enabled ? ru.tehkode.permissions.bukkit.PermissionsEx
 				.getPermissionManager().getUser(p).getSuffix()
 				: "";
 	}
 
 	public static String getTag(Player p) {
-		return MainClass.sc_enabled ? playerTag(p) : "";
+		return EnChat.sc_enabled ? playerTag(p) : "";
 	}
 
 	private static String playerTag(Player p) {
-		if (MainClass.sc_enabled) {
+		if (EnChat.sc_enabled) {
 			try {
-				net.sacredlabyrinth.phaed.simpleclans.SimpleClans sc = (net.sacredlabyrinth.phaed.simpleclans.SimpleClans) MainClass.pm
+				net.sacredlabyrinth.phaed.simpleclans.SimpleClans sc = (net.sacredlabyrinth.phaed.simpleclans.SimpleClans) EnChat.pm
 						.getPlugin("SimpleClans");
 				return ChatColor.translateAlternateColorCodes('&', sc
 						.getClanManager().getClanPlayer(p).getTagLabel());
@@ -49,7 +49,7 @@ public class Utils {
 			String suffix, String clan) {
 		return ChatColor.translateAlternateColorCodes(
 				'&',
-				MainClass.config.getString("chat-template")
+				EnChat.config.getString("chat-template")
 						.replace("@player", p.getName())
 						.replace("@prefix", prefix).replace("@suffix", suffix)
 						.replace("@clan", clan).replace("@message", "%2$s"));
@@ -57,7 +57,7 @@ public class Utils {
 
 	public static IChat getChatByMessage(String message) {
 		try {
-			for (IChat chat : MainClass.chats) {
+			for (IChat chat : EnChat.chats) {
 				if (!chat.isDefault()
 						&& message.toLowerCase().startsWith(
 								chat.getChatPrefix())) {
@@ -65,10 +65,10 @@ public class Utils {
 				}
 			}
 		} catch (NullPointerException ex) {
-			return new Chat(MainClass.config.getString("default-chat"));
+			return new Chat(EnChat.config.getString("default-chat"));
 		}
 
-		return new Chat(MainClass.config.getString("default-chat"));
+		return new Chat(EnChat.config.getString("default-chat"));
 	}
 
 	public static List<Player> getLocalRecipients(Player p, double range,
@@ -92,7 +92,7 @@ public class Utils {
 		return recipients;
 	}
 
-	public static int getLocalRecipientsLenght(Player p, double range,
+	public static int getRecipientsSize(Player p, double range,
 			String permission) {
 		if (range <= 0) {
 			return getLocalRecipients(p, range, permission).size();
@@ -122,16 +122,16 @@ public class Utils {
 	}
 
 	public static String removeMatches(String message) {
-		for (String match : MainClass.config.getStringList("matches")) {
+		for (String match : EnChat.config.getStringList("matches")) {
 			message = message.replaceAll(match,
-					MainClass.config.getString("replaceTo"));
+					EnChat.config.getString("replaceTo"));
 		}
 		return message;
 	}
 
 	public static String lang(String string) {
 		return ChatColor.translateAlternateColorCodes('&',
-				MainClass.config.getString("lang." + string));
+				EnChat.config.getString("lang." + string));
 	}
 
 }

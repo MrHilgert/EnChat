@@ -14,7 +14,7 @@ public class EnChatCommand implements CommandExecutor {
 		if (sender.hasPermission("enchat.command")) {
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("reload")) {
-					MainClass.configReload();
+					EnChat.configReload();
 					sender.sendMessage(Utils.lang("config-reloaded"));
 				}else sender.sendMessage(Utils.lang("usage"));
 			} else {

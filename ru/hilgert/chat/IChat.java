@@ -14,20 +14,24 @@ public interface IChat {
 
 	String getName();
 	
+	String getFormattedName();
+	
 	String getChatPrefix();
 
 	String getFormattedTemplate(Player player);
-	
+
 	boolean hasPermission(Player p);
-	
+
 	String getSeePermission();
-	
+
 	List<Player> getRecipients(Player p);
-	
+
 	boolean isDefault();
-	
+
 	String getLastMessage(Player player);
-	
+
 	void setLastMessage(Player player, String message);
+
+	List<String> getMutes();
 	
 }

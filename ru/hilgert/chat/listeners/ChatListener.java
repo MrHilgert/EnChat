@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import ru.hilgert.chat.IChat;
-import ru.hilgert.chat.MainClass;
+import ru.hilgert.chat.EnChat;
 import ru.hilgert.chat.utils.Utils;
 
 public class ChatListener implements Listener {
@@ -15,7 +15,7 @@ public class ChatListener implements Listener {
 	private static int maxUpperChars;
 
 	public ChatListener() {
-		maxUpperChars = MainClass.config.getInt("maxUpperChars");
+		maxUpperChars = EnChat.config.getInt("maxUpperChars");
 	}
 
 	@EventHandler
