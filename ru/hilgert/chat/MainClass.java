@@ -21,6 +21,8 @@ public class MainClass extends JavaPlugin {
 	public static PluginManager pm;
 	public static FileConfiguration config;
 
+	public static final List<IChat> chats = new ArrayList<IChat>();
+
 	public static File cFile;
 
 	public void onEnable() {
@@ -30,7 +32,7 @@ public class MainClass extends JavaPlugin {
 		config = getConfig();
 
 		initConfig();
-
+		loadChats();
 		pm = Bukkit.getPluginManager();
 
 		sc_enabled = pm.getPlugin("SimpleClans") != null
@@ -45,38 +47,54 @@ public class MainClass extends JavaPlugin {
 		getCommand("enchat").setExecutor(new EnChatCommand());
 	}
 
-	private void initConfig() {
+	private static void loadChats() {
+		chats.clear();
+		for (String chat : config.getConfigurationSection("chats").getKeys(
+				false)) {
+			chats.add(new Chat(chat));
+		}
+	}
+
+	private static void initConfig() {
 
 		List<String> matches = new ArrayList<String>();
 		matches.add("^\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}$");
+		matches.add("^\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}:\\d{1,5}$");
 		config.addDefault("SimpleClans", false);
 		config.addDefault("pex", false);
 
-		config.addDefault("ranged-chat", true);
-
-		config.addDefault("chat-range", 100d);
 		config.addDefault("maxUpperChars", 10);
-		config.addDefault("shout-char", '!');
 
-		config.addDefault("shout-template",
-				"@clan&e@prefix@player&r@suffix: &7@message");
-		config.addDefault("chat-template",
-				"[@count] @clan&7@prefix@player&r@suffix: &f@message");
-	
+		config.addDefault("default-chat", "default");
+
+		config.addDefault("chats.default.name", "Локальный");
+		config.addDefault("chats.default.format",
+				"[@count] @clan@prefix@player@suffix: @message");
+		config.addDefault("chats.default.ranged", true);
+		config.addDefault("chats.default.range", 100.0);
+
+		config.addDefault("chats.global.name", "Глобальный");
+		config.addDefault("chats.global.prefix", "#w");
+		config.addDefault("chats.global.format",
+				"@clan@prefix@player@suffix: @message");
+		config.addDefault("chats.global.ranged", false);
+		config.addDefault("chats.global.range", 0.0);
+
 		config.addDefault("replaceTo", "<Цензура>");
 		config.addDefault("matches", matches);
 
-		config.addDefault("lang.shout", "&aИспользуйте: !<Сообщение>");
+		config.addDefault("lang.useChat",
+				"&aИспользуйте: {CHAT_PREFIX}<Сообщение>");
 		config.addDefault("lang.config-reloaded", "&aКонфиг перезагружен");
 		config.addDefault("lang.usage", "&aИспользуйте: /enchat <reload>");
-		config.addDefault("lang.no-permission" + "",
-				"&cУ вас нету прав на использование данной команды");
+		config.addDefault("lang.no-permission",
+				"&cУ вас нету прав для данного действия");
 		config.addDefault(
 				"lang.dontCaps",
 				"&cНа этом сервере запрещено использовать большое количество больших букв в высоком регистре");
 		config.options().copyDefaults(true);
 
-		saveConfig();
+		configSave();
 		matches = null;
 	}
 
@@ -90,6 +108,7 @@ public class MainClass extends JavaPlugin {
 
 	public static void configReload() {
 		config = YamlConfiguration.loadConfiguration(cFile);
+		initConfig();
 	}
 
 }

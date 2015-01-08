@@ -6,19 +6,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import ru.hilgert.chat.IChat;
 import ru.hilgert.chat.MainClass;
 import ru.hilgert.chat.utils.Utils;
 
 public class ChatListener implements Listener {
 
 	private static int maxUpperChars;
-	private static double range;
-	private static String shoutChar;
 
 	public ChatListener() {
 		maxUpperChars = MainClass.config.getInt("maxUpperChars");
-		range = MainClass.config.getDouble("chat-range", 100d);
-		shoutChar = MainClass.config.getString("shout-char");
 	}
 
 	@EventHandler
@@ -27,48 +24,46 @@ public class ChatListener implements Listener {
 
 		if (e.isCancelled())
 			return;
-		if (e.getMessage().equalsIgnoreCase(shoutChar)) {
-			e.getPlayer().sendMessage(Utils.lang("shout"));
-			e.setCancelled(true);
-		}
 
 		e.getRecipients().clear();
 
 		String message = e.getPlayer().hasPermission("enchat.chat.colored") ? ChatColor
 				.translateAlternateColorCodes('&', e.getMessage()) : e
 				.getMessage();
-		message = p.hasPermission("enchat.matches.bypass") ? message : Utils.removeMatches(message) ;
+		message = p.hasPermission("enchat.matches.bypass") ? message : Utils
+				.removeMatches(message);
 		if (Utils.getUpperCharsCount(message) >= maxUpperChars
 				&& !p.hasPermission("enchat.caps.bypass")) {
 			e.setCancelled(true);
 			p.sendMessage(Utils.lang("dontCaps"));
 			return;
 		}
-		
-		
-		
-		boolean shout = e.getMessage().startsWith(
-				MainClass.config.getString("shout-char", "!"))
-				&& p.hasPermission("enchat.channel.global");
+		IChat chat = Utils.getChatByMessage(message);
+		if (chat.getLastMessage(p).equalsIgnoreCase(message)
+				&& !p.hasPermission("enchat.spam.bypass")) {
+			p.sendMessage(Utils.lang("dontSpam"));
+			e.setCancelled(true);
+			return;
+		}
+		if (e.getMessage().equalsIgnoreCase(chat.getChatPrefix())) {
+			e.getPlayer().sendMessage(
+					Utils.lang("useChat").replace("{CHAT_PREFIX}",
+							chat.getChatPrefix()));
+			e.setCancelled(true);
+			return;
+		}
 
-		String shoutFormat = Utils.getShoutTemplate(p, Utils.getPrefix(p),
-				Utils.getSuffix(p), Utils.getTag(p));
-		String chatFormat = Utils.getChatTemplate(p, Utils.getPrefix(p),
-				Utils.getSuffix(p), Utils.getTag(p)).replace("@count",
-				Utils.getLocalRecipientsLenght(p, range) + "");
-
-		if (shout) {
-			e.getRecipients().addAll(Utils.getAllRecipients());
-			e.setFormat(shoutFormat);
-			e.setMessage(message.substring(MainClass.config.getString(
-					"shout-char").length()));
+		if (chat.hasPermission(p)) {
+			e.getRecipients().addAll(chat.getRecipients(p));
+			e.setFormat(chat.getFormattedTemplate(p));
+			e.setMessage(message.substring(chat.getChatPrefix().length()));
+			if (!p.hasPermission("enchat.spam.bypass"))
+				chat.setLastMessage(p, message);
 		} else {
-			e.getRecipients().addAll(
-					Utils.getLocalRecipients(e.getPlayer(), range));
-			e.setFormat(chatFormat);
-			e.setMessage(message);
+			p.sendMessage(Utils.lang("no-permission"));
+			e.setCancelled(true);
+			return;
 		}
 
 	}
-
 }

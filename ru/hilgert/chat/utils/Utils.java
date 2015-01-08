@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import ru.hilgert.chat.Chat;
+import ru.hilgert.chat.IChat;
 import ru.hilgert.chat.MainClass;
 
 public class Utils {
@@ -43,12 +45,8 @@ public class Utils {
 		return "";
 	}
 
-	public static String getChatTemplate(Player p, String prefix,
+	public static String getChatTemplate(String chat, Player p, String prefix,
 			String suffix, String clan) {
-		if (!MainClass.config.getBoolean("ranged-chat")) {
-			return getShoutTemplate(p, prefix, suffix, clan);
-		}
-
 		return ChatColor.translateAlternateColorCodes(
 				'&',
 				MainClass.config.getString("chat-template")
@@ -57,17 +55,24 @@ public class Utils {
 						.replace("@clan", clan).replace("@message", "%2$s"));
 	}
 
-	public static String getShoutTemplate(Player p, String prefix,
-			String suffix, String clan) {
-		return ChatColor.translateAlternateColorCodes(
-				'&',
-				MainClass.config.getString("shout-template")
-						.replace("@player", p.getName())
-						.replace("@prefix", prefix).replace("@suffix", suffix)
-						.replace("@clan", clan).replace("@message", "%2$s"));
+	public static IChat getChatByMessage(String message) {
+		try {
+			for (IChat chat : MainClass.chats) {
+				if (!chat.isDefault()
+						&& message.toLowerCase().startsWith(
+								chat.getChatPrefix())) {
+					return chat;
+				}
+			}
+		} catch (NullPointerException ex) {
+			return new Chat(MainClass.config.getString("default-chat"));
+		}
+
+		return new Chat(MainClass.config.getString("default-chat"));
 	}
 
-	public static List<Player> getLocalRecipients(Player p, double range) {
+	public static List<Player> getLocalRecipients(Player p, double range,
+			String permission) {
 
 		Location loc = p.getLocation();
 
@@ -77,7 +82,8 @@ public class Utils {
 
 		for (Player recipient : p.getWorld().getPlayers()) {
 
-			if (loc.distanceSquared(recipient.getLocation()) > squaredDistance) {
+			if (loc.distanceSquared(recipient.getLocation()) > squaredDistance
+					&& recipient.hasPermission(permission)) {
 				continue;
 			}
 
@@ -86,15 +92,20 @@ public class Utils {
 		return recipients;
 	}
 
-	public static int getLocalRecipientsLenght(Player p, double range) {
-		return getLocalRecipients(p, range).size();
+	public static int getLocalRecipientsLenght(Player p, double range,
+			String permission) {
+		if (range <= 0) {
+			return getLocalRecipients(p, range, permission).size();
+		}
+		return getAllRecipients(permission).size();
 	}
 
-	public static List<Player> getAllRecipients() {
+	public static List<Player> getAllRecipients(String permission) {
 		List<Player> recipients = new LinkedList<Player>();
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			recipients.add(p);
+			if (p.hasPermission(permission))
+				recipients.add(p);
 		}
 
 		return recipients;

@@ -1,5 +1,5 @@
 name: EnChat
-version: 1.0
+version: 4.0
 author: Hilgert
 main: ru.hilgert.chat.MainClass
 commands:
